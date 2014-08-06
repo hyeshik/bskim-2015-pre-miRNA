@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2014 Hyeshik Chang
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# - Hyeshik Chang <hyeshik@snu.ac.kr>
+#
+
+# ---
+# miRBase's FASTA files for miRNA hairpins are somewhat narrow to enable mapping to
+# extended flanking sequences of pre-miRNAs. This ensures long stretches of flanking
+# sequences surrounding pre-miRNAs.
+# ---
+
+GENOME_REF_URL = 'http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.masked.gz'
+MIRBASE_REF_URL = 'ftp://mirbase.org/pub/mirbase/CURRENT/genomes/hsa.gff3'
+FLANKING_EXTENSION = 50
+
+rule all:
+    input: 'hairpins.fa', 'hairpins.fa.fai', 'hairpins/hairpins.version'
+
+rule download_genome_reference:
+    output: temp('refgenome.fa')
+    shell: 'wget -O - {url} | gzip -d - > {{output}}'.format(url=GENOME_REF_URL)
+
+rule index_fasta:
+    input: '{name}.fa'
+    output: '{name}.fa.fai'
+    shell: 'samtools faidx {input}'
+
+rule download_mirbase_catalog:
+    output: temp('mirbase.gff3')
+    shell: 'wget -O {{output}} {url}'.format(url=MIRBASE_REF_URL)
+
+rule make_genome_size:
+    input: 'refgenome.fa'
+    output: temp('refgenome.sizes')
+    shell: 'faSize -tab -detailed {input} > {output}'
+
+rule extract_extended_hairpin_regions:
+    input: mirbase='mirbase.gff3', genomesizes='refgenome.sizes', genomefasta='refgenome.fa'
+    output: 'hairpins.fa'
+    shell: "grep primary_transcript {input.mirbase} | \
+            bedtools slop -l {FLANKING_EXTENSION} -r {FLANKING_EXTENSION} -s -i - \
+                          -g {input.genomesizes} | \
+            awk '{{ printf \"%s\\t%d\\t%d\\t%s\\t.\\t%s\\n\", $1, $4-1, $5, \
+                    gensub(/.*Name=/, \"\", $9), $7; }}' | \
+            bedtools getfasta -fi {input.genomefasta} -bed - -fo - -s -name > {output}"
+
+rule build_gmap_index:
+    input: 'hairpins.fa'
+    output: 'hairpins/hairpins.version'
+    params: outputdir='hairpins'
+    shell: 'gmap_build -D . -d {params.outputdir} -k 12 -b 12 -q 1 {input}'
+
