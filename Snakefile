@@ -40,7 +40,8 @@ subworkflow reference_preparation:
 rule all:
     input:  expand('sequences/{sample}.fa.gz', sample=SAMPLES), \
             expand('alignments/{sample}.psl.gz', sample=SAMPLES), \
-            expand('stats/{sample}.mods.txt.gz', sample=SAMPLES)
+            expand('stats/{sample}.mods.txt.gz', sample=SAMPLES), \
+            expand('geosubmission/{sample}.txt.gz', sample=SAMPLES)
 
 rule trim_adapters:
     input: 'sequences/{sample}.fq.gz'
@@ -74,4 +75,10 @@ rule find_untemplated_modifications:
     shell: 'tools/psl2untemplatemods.py --read={input.seq} \
                 --reference={input.ref} --alignments={input.aln} --output - | \
             gzip -c - > {output}'
+
+rule generate_GEO_sequence_tabular_list:
+    input: 'stats/{sample}.mods.txt.gz'
+    output: 'geosubmission/{sample}.txt.gz'
+    shell: "zcat {input} | awk '{{printf \"%s\\t%d\\n\", $4, $3;}}' | \
+            sed -e '1s/^.*$/SEQUENCE\tCOUNT/' | gzip -c - > {output}"
 
