@@ -63,8 +63,8 @@ def run(options):
     uniquemaps['readSeq'] = uniquemaps.apply(lambda x:
                                              str(seqgetter.send(x['Q name']).seq), axis=1)
     uniquemaps['addedSeq'] = uniquemaps.apply(lambda x: x['readSeq'][x['Q end']:], axis=1)
-    finaltbl = uniquemaps[['T name', 'qSeqNumber', 'readCount', 'readSeq', 'addedSeq']]
-    finaltbl.columns = ['hairpin', 'seqNo', 'readCount', 'readSeq', 'addedSeq']
+    finaltbl = uniquemaps[['T name', 'qSeqNumber', 'readCount', 'readSeq', 'T end', 'addedSeq']]
+    finaltbl.columns = ['hairpin', 'seqNo', 'readCount', 'readSeq', 'refEndPos', 'addedSeq']
 
     finaltbl.to_csv(options.output if options.output != '-' else '/dev/stdout', sep='\t',
                     index=False)
