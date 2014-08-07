@@ -22,34 +22,56 @@
 # - Hyeshik Chang <hyeshik@snu.ac.kr>
 #
 
-SAMPLES = """Control TUT247KD""".split()
+shell.prefix('set -e; set -o pipefail; ' \
+             'export PYTHONPATH=/atp/hyeshik/p/tailseq; ' \
+             'export R_LIBS=/atp/hyeshik/.R/library; ')
+shell.executable(os.popen('which bash').read().strip()) # pipefail is supported by bash only.
 
-PEAR_SUFFIXES = ['assembled', 'discarded', 'unassembled.forward', 'unassembled.reverse']
+SAMPLES = ['Control', 'TUT247KD']
+
+TRIM_FIRST_CYCLES = 15 # to suppress mismatches from mismatched primer
+MINIMUM_LENGTH = 15 + TRIM_FIRST_CYCLES
+ADAPTER_SEQUENCE = 'TGGAATTCTCGGGTGCCAAGG'
 
 subworkflow reference_preparation:
     workdir: 'reference'
     snakefile: 'reference/Snakefile'
 
 rule all:
-    input:  expand('sequences/{sample}.assembled.fq.gz', sample=SAMPLES), \
-            reference_preparation('hairpins/hairpins.version')
+    input:  expand('sequences/{sample}.fa.gz', sample=SAMPLES), \
+            expand('alignments/{sample}.psl.gz', sample=SAMPLES), \
+            expand('stats/{sample}.mods.txt.gz', sample=SAMPLES)
 
-rule uncompress_fastq:
-    input: 'sequences/{filename}.fq.gz'
-    output: temp('scratch/{filename}.fq')
-    shell: 'zcat {input} > {output}'
+rule trim_adapters:
+    input: 'sequences/{sample}.fq.gz'
+    output: 'sequences/{sample}.fa.gz'
+    shell: 'zcat {input} | \
+            cutadapt --trimmed-only --minimum-length={MINIMUM_LENGTH} \
+                     --cut={TRIM_FIRST_CYCLES} -a {ADAPTER_SEQUENCE} - | \
+            fastx_collapser -Q33 - | gzip -c - > {output}'
 
-rule join_paired_end_reads:
-    input: expand('scratch/{{sample}}_{read}.fq', read=['R1', 'R2'])
-    output: expand(temp('scratch/{{sample}}.{suffix}.fastq'), suffix=PEAR_SUFFIXES)
-    params: outputprefix='scratch/{sample}'
+rule align_reads_by_blat:
+    input: seq='sequences/{sample}.fa.gz', ref=reference_preparation('hairpins.fa')
+    output: 'alignments/{sample}.psl.gz'
+    shell: 'blat -noTrimA -tileSize=8 -stepSize=4 -noHead -out=pslx \
+                -minIdentity=70 {input.ref} {input.seq} /dev/stdout | \
+            grep "^[0-9]" | gzip -c - > {output}'
+
+rule align_reads_by_blast:
+    input: seq='sequences/{sample}.fa.gz', ref=reference_preparation('hairpins.fa')
+    output: 'alignments/{sample}.blast.gz'
+    params: refdb='reference/hairpins'
     threads: 32
-    shell: 'tools/pear -j {threads} -y 8G -f {input[0]} -r {input[1]} \
-                -o {params.outputprefix}'
+    shell: 'zcat {input.seq} | \
+            blastn -db {params.refdb} -outfmt 6 -num_threads {threads} -word_size 8 \
+                -strand plus -query /dev/stdin | \
+            gzip -c - > {output}'
 
-rule compress_pear_outputs:
-    input: 'scratch/{sample,[^.]+}.{suffix}.fastq'
-    output: 'sequences/{sample}.{suffix}.fq.gz'
-    threads: 32
-    shell: 'pigz -p {threads} -c {input} > {output}'
+rule find_untemplated_modifications:
+    input: seq='sequences/{sample}.fa.gz', ref=reference_preparation('hairpins.fa'), \
+           aln='alignments/{sample}.psl.gz'
+    output: 'stats/{sample}.mods.txt.gz'
+    shell: 'tools/psl2untemplatemods.py --read={input.seq} \
+                --reference={input.ref} --alignments={input.aln} --output - | \
+            gzip -c - > {output}'
 

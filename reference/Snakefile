@@ -30,10 +30,10 @@
 
 GENOME_REF_URL = 'http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.masked.gz'
 MIRBASE_REF_URL = 'ftp://mirbase.org/pub/mirbase/CURRENT/genomes/hsa.gff3'
-FLANKING_EXTENSION = 50
+FLANKING_EXTENSION = 10
 
 rule all:
-    input: 'hairpins.fa', 'hairpins.fa.fai', 'hairpins/hairpins.version'
+    input: 'hairpins.fa', 'hairpins.fa.fai', 'hairpins.novo'
 
 rule download_genome_reference:
     output: temp('refgenome.fa')
@@ -63,9 +63,8 @@ rule extract_extended_hairpin_regions:
                     gensub(/.*Name=/, \"\", $9), $7; }}' | \
             bedtools getfasta -fi {input.genomefasta} -bed - -fo - -s -name > {output}"
 
-rule build_gmap_index:
+rule index_hairpins_for_novoalign:
     input: 'hairpins.fa'
-    output: 'hairpins/hairpins.version'
-    params: outputdir='hairpins'
-    shell: 'gmap_build -D . -d {params.outputdir} -k 12 -b 12 -q 1 {input}'
+    output: 'hairpins.novo'
+    shell: 'novoindex -k 8 -s 1 -m {output} {input}'
 
