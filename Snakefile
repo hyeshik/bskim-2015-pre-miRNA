@@ -72,7 +72,7 @@ rule find_untemplated_modifications:
     input: seq='sequences/{sample}.fa.gz', ref=reference_preparation('hairpins.fa'), \
            aln='alignments/{sample}.psl.gz'
     output: 'stats/{sample}.mods.txt.gz'
-    shell: 'tools/psl2untemplatemods.py --read={input.seq} \
+    shell: 'tools/psl2untemplatemods.py --read={input.seq} --untmpl-t-rescue \
                 --reference={input.ref} --alignments={input.aln} --output - | \
             gzip -c - > {output}'
 

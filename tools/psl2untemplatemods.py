@@ -25,7 +25,9 @@
 
 import pandas as pd
 import gzip
+from itertools import dropwhile
 from Bio import SeqIO
+import re
 
 PSL_HEADER = [
     'match', 'mismatch', 'rep. match', 'Ns', 'Q gap count', 'Q gap bases', 'T gap count',
@@ -41,13 +43,43 @@ MULTIMAP_SORT_ORDER = [ # ascending?
     False,   True,       True,          True,          True,          True,
 ]
 
+
 def iterseq_sequential(seqin, format='fasta'):
     nextid = yield
     for seq in SeqIO.parse(seqin, format=format):
         while seq.name == nextid:
             nextid = yield seq
 
+def rescue_untemplated_mods(row, pat_tailtrimmer=re.compile('[at]+$')):
+    qseqend = row['Q seq'].rstrip(',').split(',')[-1]
+    tseqend = row['T seq'].rstrip(',').split(',')[-1]
+
+    if qseqend == tseqend:
+        return row
+
+    tailmatch = pat_tailtrimmer.search(qseqend)
+    if tailmatch is None:
+        return row
+
+    scanstart = tailmatch.start()
+    qseqend_toscan = qseqend[scanstart:]
+    tseqend_toscan = tseqend[scanstart:]
+    if qseqend_toscan == tseqend_toscan:
+        return row
+
+    firstmismatch = next(dropwhile(lambda x: x[1][0] == x[1][1],
+                            enumerate(zip(qseqend_toscan, tseqend_toscan))))[0]
+    additional_clipping = len(qseqend_toscan) - firstmismatch
+    if additional_clipping <= 0:
+        return row
+
+    row['T end'] -= additional_clipping
+    row['addedSeq'] = qseqend_toscan[-additional_clipping:].upper() + row['addedSeq']
+
+    return row
+
 def run(options):
+    t_rescue = options.t_rescue
     refhairpins = SeqIO.to_dict(SeqIO.parse(options.reffile, 'fasta'))
 
     tbl = pd.read_table(options.alnfile, compression='gzip', names=PSL_HEADER)
@@ -63,6 +95,10 @@ def run(options):
     uniquemaps['readSeq'] = uniquemaps.apply(lambda x:
                                              str(seqgetter.send(x['Q name']).seq), axis=1)
     uniquemaps['addedSeq'] = uniquemaps.apply(lambda x: x['readSeq'][x['Q end']:], axis=1)
+
+    if t_rescue:
+        uniquemaps = uniquemaps.apply(rescue_untemplated_mods, axis=1)
+
     finaltbl = uniquemaps[['T name', 'qSeqNumber', 'readCount', 'readSeq', 'T end', 'addedSeq']]
     finaltbl.columns = ['hairpin', 'seqNo', 'readCount', 'readSeq', 'refEndPos', 'addedSeq']
 
@@ -80,6 +116,9 @@ def parse_arguments():
                         help='Reference hairpin sequence file in FASTA format', required=True)
     parser.add_argument('--alignments', dest='alnfile', metavar='FILE', type=str,
                         help='Sequence alignments in gzipped-PSLx format', required=True)
+    parser.add_argument('--untmpl-t-rescue', dest='t_rescue', action='store_true',
+                        default=False, help='Rescue aggressively untemplate T-stretches '
+                        'with partial match to reference sequence.')
     parser.add_argument('--output', dest='output', metavar='FILE', type=str,
                         help='Output file for resulting table', required=True)
     return parser.parse_args()
