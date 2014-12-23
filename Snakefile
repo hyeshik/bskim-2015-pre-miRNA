@@ -22,9 +22,7 @@
 # - Hyeshik Chang <hyeshik@snu.ac.kr>
 #
 
-shell.prefix('set -e; set -o pipefail; ' \
-             'export PYTHONPATH=/atp/hyeshik/p/tailseq; ' \
-             'export R_LIBS=/atp/hyeshik/.R/library; ')
+shell.prefix('set -e; set -o pipefail; ')
 shell.executable(os.popen('which bash').read().strip()) # pipefail is supported by bash only.
 
 SAMPLES = ['Control', 'TUT247KD']
