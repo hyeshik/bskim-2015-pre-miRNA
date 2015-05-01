@@ -1,4 +1,4 @@
-# Supplementary Data for B. Kim et al. (2015)
+# Supplementary Data for Boseon Kim et al. (2015)
 
 This repository includes scripts and interactive notebooks for the data analysis of the high-throughput
 sequencing of pre-miRNAs in HeLa cells. See the supplementary experimental procedures included in the
@@ -7,10 +7,10 @@ manuscript for the detailed descriptions of the analytic processes.
 
 ## Saved notebook sessions
 
-1. [Global change of uridylation by knockdown of TUT2/4/7](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-global-uridylation-changes.ipynb)
 1. [Modification frequency throughout the 3' end positions of templated nucleotides](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-modifications-endpos-frequency-circles.ipynb)
-1. [Relationships between 3' end trimming and uridylation?](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-trimming-and-uridylation.ipynb)
 1. [Bird's eye view for 3' end and uridylation patterns in control and TUT247 knockdown samples](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-uridylation-rate-change-by-position.ipynb)
+1. [Global change of uridylation by knockdown of TUT2/4/7](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-global-uridylation-changes.ipynb)
+1. [Relationships between 3' end trimming and uridylation?](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-trimming-and-uridylation.ipynb)
 
 ## Availability of the sequencing data
 
