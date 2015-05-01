@@ -4,6 +4,14 @@ This repository includes scripts and interactive notebooks for the data analysis
 sequencing of pre-miRNAs in HeLa cells. See the supplementary experimental procedures included in the
 manuscript for the detailed descriptions of the analytic processes.
 
+
+## Saved notebook sessions
+
+1. [Global change of uridylation by knockdown of TUT2/4/7](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-global-uridylation-changes.ipynb)
+1. [Modification frequency throughout the 3' end positions of templated nucleotides](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-modifications-endpos-frequency-circles.ipynb)
+1. [Relationships between 3' end trimming and uridylation?](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-trimming-and-uridylation.ipynb)
+1. [Bird's eye view for 3' end and uridylation patterns in control and TUT247 knockdown samples](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-uridylation-rate-change-by-position.ipynb)
+
 ## Availability of the sequencing data
 
 You can download the FASTQ files enclosing the reads from pre-miRNA sequencing
@@ -23,6 +31,35 @@ from the NCBI Gene Expression Omnibus (GEO) with an
 * [BEDTools](https://github.com/arq5x/bedtools2)
 * [samtools](http://www.htslib.org)
 * [Jim Kent's Genome Browser utilities (faSize only)](https://genome.ucsc.edu/util.html)
+
+## Instructions
+
+1. Build the reference database.
+
+   ```
+   $ (cd reference; snakemake)
+   ```
+
+1. Download sequencing data from the NCBI SRA.
+
+   ```
+   $ fastq-dump .... (to be updated soon)
+   ```
+
+1. Create links to the downloaded FASTQ files in sequences/ dir.
+ 
+   ```
+   $ mkdir sequences
+   $ (cd sequences; ln -sf ... Control.fq.gz)
+   $ (cd sequences; ln -sf ... TUT247KD.fq.gz)
+   ```
+
+1. Run the pipeline.
+
+   ```
+   $ snakemake
+   ```
+
 
 ## The MIT License
 
