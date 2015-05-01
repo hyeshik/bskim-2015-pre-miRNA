@@ -1,5 +1,7 @@
 # Supplementary Data for Boseon Kim et al. (2015)
 
+by Hyeshik Chang &lt;hyeshik@snu.ac.kr&gt;
+
 <figure>
 <img src="https://raw.githubusercontent.com/hyeshik/bskim-2015-pre-miRNA/master/images/uridylating-tuts.png" width="142px">
 <figurecaption>(c) Boseon Kim</figurecaption>
