@@ -1,6 +1,9 @@
 # Supplementary Data for Boseon Kim et al. (2015)
 
+<figure>
 <img src="https://raw.githubusercontent.com/hyeshik/bskim-2015-pre-miRNA/master/images/uridylating-tuts.png" width="142px">
+<figurecaption>(c) Boseon Kim</figurecaption>
+</figure>
 
 This repository includes scripts and interactive notebooks for the data analysis of the high-throughput
 sequencing of pre-miRNAs in HeLa cells. See the supplementary experimental procedures included in the
