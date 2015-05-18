@@ -48,7 +48,7 @@ from the NCBI Gene Expression Omnibus (GEO) with an
 
    ```
    $ git clone https://github.com/hyeshik/bskim-2015-pre-miRNA.git
-   $ cd bskim-2015-pre-miRNA.git
+   $ cd bskim-2015-pre-miRNA
    ```
 
 1. Run the pipeline.
