@@ -44,24 +44,11 @@ from the NCBI Gene Expression Omnibus (GEO) with an
 
 ## Instructions
 
-1. Build the reference database.
+1. Check out the repository
 
    ```
-   $ (cd reference; snakemake)
-   ```
-
-1. Download sequencing data from the NCBI SRA.
-
-   ```
-   $ fastq-dump .... (to be updated soon)
-   ```
-
-1. Create links to the downloaded FASTQ files in sequences/ dir.
- 
-   ```
-   $ mkdir sequences
-   $ (cd sequences; ln -sf ... Control.fq.gz)
-   $ (cd sequences; ln -sf ... TUT247KD.fq.gz)
+   $ git clone https://github.com/hyeshik/bskim-2015-pre-miRNA.git
+   $ cd bskim-2015-pre-miRNA
    ```
 
 1. Run the pipeline.
@@ -69,7 +56,6 @@ from the NCBI Gene Expression Omnibus (GEO) with an
    ```
    $ snakemake
    ```
-
 
 ## The MIT License
 

@@ -33,7 +33,7 @@ MIRBASE_REF_URL = 'ftp://mirbase.org/pub/mirbase/CURRENT/genomes/hsa.gff3'
 FLANKING_EXTENSION = 10
 
 rule all:
-    input: 'hairpins.fa', 'hairpins.fa.fai', 'hairpins.novo'
+    input: 'hairpins.fa', 'hairpins.fa.fai'
 
 rule download_genome_reference:
     output: temp('refgenome.fa')
