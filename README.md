@@ -54,8 +54,25 @@ from the NCBI Gene Expression Omnibus (GEO) with an
 1. Run the pipeline.
 
    ```
-   $ snakemake
+   $ snakemake -j
    ```
+
+## Using a Docker image
+
+In alternative to install the prerequisites into your machine, you can use our
+[Docker image](https://registry.hub.docker.com/u/hyeshik/bskim-2015/) to replicate our analysis.
+
+1. Launch a container from the downloaded image after pulling it
+
+    ```
+    $ docker run -t -i hyeshik/bskim-2015:r1 /bin/bash
+    ```
+
+1. Run the pipeline
+
+    ```
+    # cd /home/hyeshik/bskim-2015-pre-miRNA; snakemake -j
+    ```
 
 ## The MIT License
 
