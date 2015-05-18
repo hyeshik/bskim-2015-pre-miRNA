@@ -85,7 +85,7 @@ def run(options):
     tbl = pd.read_table(options.alnfile, compression='gzip', names=PSL_HEADER)
     sortedmaps = tbl[tbl['strand'] == '+'].sort(['Q name'] + MULTIMAP_SORT_COLUMNS,
                                          ascending=[True] + MULTIMAP_SORT_ORDER)
-    uniquemaps = sortedmaps.drop_duplicates('Q name')
+    uniquemaps = sortedmaps.drop_duplicates('Q name').copy()
     uniquemaps['qSeqNumber'] = uniquemaps['Q name'].apply(lambda x: int(x.split('-')[0]))
     uniquemaps['readCount'] = uniquemaps['Q name'].apply(lambda x: int(x.split('-')[1]))
     uniquemaps = uniquemaps.sort('qSeqNumber', ascending=True)
