@@ -44,7 +44,7 @@ from the NCBI Gene Expression Omnibus (GEO) with an
 
 ## Instructions
 
-1. Check out the repository
+1. Check out the repository.
 
    ```
    $ git clone https://github.com/hyeshik/bskim-2015-pre-miRNA.git
@@ -62,13 +62,13 @@ from the NCBI Gene Expression Omnibus (GEO) with an
 In alternative to install the prerequisites into your machine, you can use our
 [Docker image](https://registry.hub.docker.com/u/hyeshik/bskim-2015/) to replicate our analysis.
 
-1. Launch a container from the downloaded image after pulling it
+1. Launch a container after pulling an image from the Docker hub.
 
     ```
     $ docker run -t -i hyeshik/bskim-2015:r1 /bin/bash
     ```
 
-1. Run the pipeline
+1. Run the pipeline.
 
     ```
     # cd /home/hyeshik/bskim-2015-pre-miRNA; snakemake -j
