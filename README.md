@@ -2,22 +2,25 @@
 
 by Hyeshik Chang &lt;hyeshik@snu.ac.kr&gt;
 
+See Article: [B. Kim, M. Ha and L. Loeff et al. (2015) TUT7 controls the fate of precursor microRNAs by using three different uridylation mechanisms. *EMBO Journal.* *in press*](http://emboj.embopress.org/content/early/2015/05/15/embj.201590931.long) 
+
 <figure>
 <img src="https://raw.githubusercontent.com/hyeshik/bskim-2015-pre-miRNA/master/images/uridylating-tuts.png" width="142px">
 <figurecaption>(c) Boseon Kim</figurecaption>
 </figure>
 
 This repository includes scripts and interactive notebooks for the data analysis of the high-throughput
-sequencing of pre-miRNAs in HeLa cells. See the supplementary experimental procedures included in the
-manuscript for the detailed descriptions of the analytic processes.
+sequencing of pre-miRNAs in HeLa cells. See the supplementary experimental procedures included in
+[the manuscript](http://emboj.embopress.org/content/early/2015/05/15/embj.201590931.long)
+for the detailed descriptions of the analytic processes.
 
 
 ## Saved notebook sessions
 
-1. [Modification frequency throughout the 3' end positions of templated nucleotides](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-modifications-endpos-frequency-circles.ipynb)
-1. [Bird's eye view for 3' end and uridylation patterns in control and TUT247 knockdown samples](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-uridylation-rate-change-by-position.ipynb)
-1. [Global change of uridylation by knockdown of TUT2/4/7](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-global-uridylation-changes.ipynb)
-1. [Relationships between 3' end trimming and uridylation?](http://nbviewer.ipython.org/github/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-trimming-and-uridylation.ipynb)
+1. [Modification frequency throughout the 3' end positions of templated nucleotides](https://github.com/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-modifications-endpos-frequency-circles.ipynb)
+1. [Bird's eye view for 3' end and uridylation patterns in control and TUT247 knockdown samples](https://github.com/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-uridylation-rate-change-by-position.ipynb)
+1. [Global change of uridylation by knockdown of TUT2/4/7](https://github.com/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-global-uridylation-changes.ipynb)
+1. [Relationships between 3' end trimming and uridylation?](https://github.com/hyeshik/bskim-2015-pre-miRNA/blob/master/notes/plot-trimming-and-uridylation.ipynb)
 
 ## Availability of the sequencing data
 
