@@ -31,15 +31,27 @@ TRIM_FIRST_CYCLES = 15 # to suppress mismatches from mismatched primer
 MINIMUM_LENGTH = 15 + TRIM_FIRST_CYCLES
 ADAPTER_SEQUENCE = 'TGGAATTCTCGGGTGCCAAGG'
 
+SRR_ACCESSIONS = {
+    'Control': 'SRR1734356',
+    'TUT247KD': 'SRR1734357',
+}
+
 subworkflow reference_preparation:
     workdir: 'reference'
     snakefile: 'reference/Snakefile'
 
 rule all:
-    input:  expand('sequences/{sample}.fa.gz', sample=SAMPLES), \
-            expand('alignments/{sample}.psl.gz', sample=SAMPLES), \
-            expand('stats/{sample}.mods.txt.gz', sample=SAMPLES), \
-            expand('geosubmission/{sample}.txt.gz', sample=SAMPLES)
+    input:
+        expand('sequences/{sample}.fa.gz', sample=SAMPLES),
+        expand('alignments/{sample}.psl.gz', sample=SAMPLES),
+        expand('stats/{sample}.mods.txt.gz', sample=SAMPLES),
+        expand('geosubmission/{sample}.txt.gz', sample=SAMPLES)
+
+rule download_fastq_from_sra:
+    output: 'sequences/{sample}.fq.gz'
+    params: srrno=lambda wc: SRR_ACCESSIONS[wc.sample]
+    shell: 'cd sequences && fastq-dump --gzip {params.srrno} && \
+            mv {params.srrno}.fastq.gz {wildcards.sample}.fq.gz'
 
 rule trim_adapters:
     input: 'sequences/{sample}.fq.gz'
@@ -80,3 +92,4 @@ rule generate_GEO_sequence_tabular_list:
     shell: "zcat {input} | awk '{{printf \"%s\\t%d\\n\", $4, $3;}}' | \
             sed -e '1s/^.*$/SEQUENCE\tCOUNT/' | gzip -c - > {output}"
 
+# ex: syntax=snakemake
